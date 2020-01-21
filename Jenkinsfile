@@ -5,11 +5,6 @@ pipeline {
         DB_ENGINE    = 'sqlite'
     }
     stages {
-        stage('Test') {
-            steps {
-                sh 'python --version'
-            }
-        }
         stage('build') {
             steps {
                 sh 'echo "Hello World"'
@@ -22,16 +17,35 @@ pipeline {
                 sh 'printenv'
             }
         }
+        stage('Test') {
+            steps {
+                sh 'python --version'
+            }
+        }
+        stage('Sanity check') {
+            steps {
+                input "Does the staging environment look ok?"
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying'
+            }
+        }
     }
     post {
         always {
             echo 'This will always run'
+            deleteDir() /* clean up our workspace */
         }
         success {
             echo 'This will run only if successful'
         }
         failure {
             echo 'This will run only if failed'
+            mail to: 'diego.delazzari@gmail.com',
+             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+             body: "Something is wrong with ${env.BUILD_URL}"
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'
