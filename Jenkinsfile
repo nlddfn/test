@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker { image 'node:python:3.7' } }
+    agent { docker { image 'python:3.7' } }
     environment {
         DISABLE_AUTH = 'true'
         DB_ENGINE    = 'sqlite'
@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'node --version'
+                sh 'python --version'
             }
         }
         stage('build') {
